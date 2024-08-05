@@ -1,0 +1,35 @@
+body {
+  background-color: black;
+  color: #00FF00;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  white-space: pre-wrap;
+  font-size: 1.5em;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+a {
+  color: #00FF00;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #00FF00;
+}
+
+#footer {
+  margin-top: 20px;
+  font-size: 1em;
+}
