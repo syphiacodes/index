@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "",
         "<u>┌  information websites: </u>",
         "├ <a href='https://syphia.li' target='_blank'>syphia.li</a>",
-        "└ <a href='https://cass.li' target='_blank'>cass.li</a>",
+        "└ <a href='https://www.cass.li' target='_blank'>cass.li</a>",
         "",
         "<u>┌  experimental websites: </u>",
         "├ <a href='https://windows.cass.li' target='_blank'>windows.cass.li</a>",
