@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-<meta charset='UTF-8'>
+<meta charset="UTF-8">
 <title>cass</title>
-<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html,body{
 margin:0;
@@ -14,10 +14,7 @@ font-family:Helvetica, sans-serif;
 color:#d6ccff;
 }
 
-canvas{
-display:block;
-touch-action:none;
-}
+canvas{display:block;touch-action:none;}
 
 #desktopApp{display:block;}
 
@@ -41,6 +38,39 @@ z-index:10;
 #panel p{font-size:13px;line-height:1.4;opacity:0.9;}
 #panel a{color:#c4b5fd;text-decoration:underline;}
 
+#mobileApp{
+display:none;
+padding:24px;
+box-sizing:border-box;
+}
+
+#mobileApp h1{
+margin:0 0 18px 0;
+font-size:20px;
+color:#b08cff;
+}
+
+#mobileApp a{
+color:#d8ccff;
+text-decoration:none;
+border-bottom:1px solid rgba(216,204,255,0.25);
+transition:all 0.25s ease;
+}
+
+#mobileApp a:hover{
+color:#cbb8ff;
+border-bottom:1px solid rgba(203,184,255,0.65);
+text-shadow:0 0 6px rgba(200,180,255,0.35);
+}
+
+.section{margin-bottom:18px;}
+.section-title{font-size:13px;color:#c4b5fd;}
+.section-item{font-size:13px;opacity:0.85;line-height:1.4;}
+
+@media (max-width:600px){
+#desktopApp{display:none;}
+#mobileApp{display:block;}
+}
 </style>
 </head>
 <body>
@@ -54,252 +84,282 @@ z-index:10;
 </div>
 </div>
 
+<div id="mobileApp">
+<h1><a href="https://cass.li" target="_blank">cass</a></h1>
+
+<div class="section">
+<div class="section-title">about:</div>
+<div class="section-item">- 17</div>
+<div class="section-item">- located in central europe</div>
+<div class="section-item">- live audio / music / events managment</div>
+<div class="section-item">- contact <a href="mailto:cass@cass.li">cass(at)cass.li</a></div>
+</div>
+
+<div class="section">
+<div class="section-title">music:</div>
+<div class="section-item"><a href="https://www.discogs.com/user/casssch" target="_blank">- discogs</a></div>
+<div class="section-item"><a href="https://www.last.fm/user/casssch" target="_blank">- lastfm</a></div>
+<div class="section-item"><a href="https://open.spotify.com/user/31ulwdc3tcyolpnyft7qequvhip4" target="_blank">- spotify</a></div>
+<div class="section-item"><a href="https://33rpm.noblogs.org/" target="_blank">- music blog</a></div>
+</div>
+
+<div class="section">
+<div class="section-title">other links:</div>
+<div class="section-item"><a href="https://instagram.com/cassfields" target="_blank">- insta</a></div>
+<div class="section-item"><a href="https://github.com/syphiacodes" target="_blank">- github</a></div>
+<div class="section-item"><a href="mailto:cass@cass.li">- email</a></div>
+</div>
+
+</div>
+
 <script>
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
+const isMobile = window.matchMedia('(max-width:600px)').matches;
 
-const panel = document.getElementById('panel');
-const pTitle = document.getElementById('pTitle');
-const pBody = document.getElementById('pBody');
-const pLink = document.getElementById('pLink');
+if(!isMobile){
 
-let W = 0, H = 0;
+const c=document.getElementById('c');
+const ctx=c.getContext('2d');
 
-let cam = { x: 0, y: 0, s: 1 };
-let nodes = [], edges = [];
-let hoverNode = null;
+const panel=document.getElementById('panel');
+const pTitle=document.getElementById('pTitle');
+const pBody=document.getElementById('pBody');
+const pLink=document.getElementById('pLink');
 
-const GROUPS = {
-  music: { color: '#b08cff' },
-  web: { color: '#c4b5fd' },
-  about: { color: '#d6ccff' }
+let W=0,H=0;
+let cam={x:0,y:0,s:1};
+
+let nodes=[],edges=[];
+let hoverNode=null;
+
+const GROUPS={
+music:{color:'#b08cff'},
+web:{color:'#c4b5fd'},
+about:{color:'#d6ccff'}
 };
 
-const NODES_CONFIG = [
-  {id:'17',group:'about',text:'based in central europe.'},
-  {id:'live audio',group:'about',text:'interested in live audio'},
-  {id:'music production',group:'about',text:'music work'},
-  {id:'event management',group:'about',text:'events'},
-  {id:'discogs',group:'music',text:'collection',link:'https://www.discogs.com/user/casssch'},
-  {id:'lastfm',group:'music',text:'music archive',link:'https://www.last.fm/user/casssch'},
-  {id:'spotify',group:'music',text:'playlists',link:'https://open.spotify.com'},
-  {id:'insta',group:'web',text:'photos',link:'https://instagram.com/cassfields'},
-  {id:'github',group:'web',text:'code',link:'https://github.com'},
-  {id:'email',group:'web',text:'contact',link:'mailto:cass@cass.li'}
+const NODES_CONFIG=[
+{id:'17',group:'about',text:'and based in central europe'},
+{id:'live audio',group:'about',text:'experience with live audio work'},
+{id:'music production',group:'about',text:'experiments with ableton and other audio production styles'},
+{id:'event management',group:'about',text:'knowledge of national and international event managment'},
+{id:'discogs',group:'music',text:'collection of my physical media',link:'https://www.discogs.com/user/casssch'},
+{id:'lastfm',group:'music',text:'archive of most of the music i have listened to, ever',link:'https://www.last.fm/user/casssch'},
+{id:'spotify',group:'music',text:'playlists',link:'https://open.spotify.com'},
+{id:'insta',group:'web',text:'photos',link:'https://instagram.com/cassfields'},
+{id:'github',group:'web',text:'other websites projects',link:'https://github.com'},
+{id:'email',group:'web',text:'contact for further information',link:'mailto:cass@cass.li'},
+{id:'music blog',group:'music',text:'event and music review blog',link:'https://33rpm.noblogs.org/'}
 ];
 
 function resize(){
-  const dpr = window.devicePixelRatio || 1;
+const dpr=window.devicePixelRatio||1;
+W=innerWidth;
+H=innerHeight;
 
-  W = window.innerWidth;
-  H = window.innerHeight;
+c.style.width=W+'px';
+c.style.height=H+'px';
 
-  c.style.width = W + "px";
-  c.style.height = H + "px";
+c.width=Math.round(W*dpr);
+c.height=Math.round(H*dpr);
 
-  c.width = Math.round(W * dpr);
-  c.height = Math.round(H * dpr);
-
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
 function worldToScreen(x,y){
-  return {
-    x:(x + cam.x) * cam.s + W/2,
-    y:(y + cam.y) * cam.s + H/2
-  };
+return{x:(x+cam.x)*cam.s+W/2,y:(y+cam.y)*cam.s+H/2};
 }
 
 function screenToWorld(x,y){
-  return {
-    x:(x - W/2)/cam.s - cam.x,
-    y:(y - H/2)/cam.s - cam.y
-  };
+return{x:(x-W/2)/cam.s-cam.x,y:(y-H/2)/cam.s-cam.y};
 }
 
 function getMousePos(e){
-  const rect = c.getBoundingClientRect();
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
-  };
+const r=c.getBoundingClientRect();
+return{x:e.clientX-r.left,y:e.clientY-r.top};
 }
 
 function init(){
-  nodes = [{
-    id:'cass',
-    x:0,y:0,fixed:true,
-    group:'core',
-    rHit:26,
-    rVisual:6,
-    text:'main site',
-    link:'https://cass.li'
-  }];
+nodes=[{
+id:'cass',
+x:0,y:0,fixed:true,
+group:'core',
+rHit:26,
+rVisual:6,
+text:'main site',
+link:'https://cass.li'
+}];
 
-  edges = [];
+edges=[];
 
-  NODES_CONFIG.forEach((n,i)=>{
-    nodes.push({
-      ...n,
-      x:(Math.random()-0.5)*500,
-      y:(Math.random()-0.5)*500,
-      vx:0,vy:0,
-      rHit:18,
-      rVisual:4
-    });
+const groupMap={};
 
-    edges.push([0,i+1]);
-  });
+NODES_CONFIG.forEach((n,i)=>{
+nodes.push({
+...n,
+x:(Math.random()-0.5)*300,
+y:(Math.random()-0.5)*300,
+vx:(Math.random()-0.5)*0.2,
+vy:(Math.random()-0.5)*0.2,
+rHit:18,
+rVisual:4
+});
+
+edges.push([0,i+1]);
+
+if(!groupMap[n.group]) groupMap[n.group]=[];
+groupMap[n.group].push(i+1);
+});
+
+Object.values(groupMap).forEach(list=>{
+for(let i=0;i<list.length-1;i++){
+edges.push([list[i],list[i+1]]);
+}
+});
 }
 
 function getNodeAt(x,y){
-  const w = screenToWorld(x,y);
+const w=screenToWorld(x,y);
 
-  let closest = null;
-  let closestDist = Infinity;
+let closest=null;
+let best=Infinity;
 
-  for(const n of nodes){
-    const dx = w.x - n.x;
-    const dy = w.y - n.y;
-    const dist = Math.sqrt(dx*dx + dy*dy);
+for(const n of nodes){
+const dx=w.x-n.x;
+const dy=w.y-n.y;
+const d=Math.sqrt(dx*dx+dy*dy);
 
-    const hit = n.rHit || 18;
+const r=n.rHit||18;
 
-    if(dist < hit && dist < closestDist){
-      closest = n;
-      closestDist = dist;
-    }
-  }
+if(d<r&&d<best){
+closest=n;
+best=d;
+}
+}
 
-  return closest;
+return closest;
 }
 
 function openPanel(n){
-  panel.style.display = 'block';
-  pTitle.textContent = n.id;
-  pBody.textContent = n.text || '';
+panel.style.display='block';
+pTitle.textContent=n.id;
+pBody.textContent=n.text||'';
 
-  if(n.link){
-    pLink.style.display = 'inline-block';
-    pLink.href = n.link;
-  } else {
-    pLink.style.display = 'none';
-  }
+if(n.link){
+pLink.style.display='inline-block';
+pLink.href=n.link;
+}else{
+pLink.style.display='none';
+}
 }
 
-let pointer = { down:false, node:null, startX:0, startY:0, dragging:false };
-let camStart = { x:0, y:0 };
+let pointer={down:false,node:null,startX:0,startY:0,dragging:false};
+let camStart={x:0,y:0};
 
-c.addEventListener('pointerdown', e=>{
-  const m = getMousePos(e);
-
-  pointer.down = true;
-  pointer.node = getNodeAt(m.x,m.y);
-  pointer.startX = m.x;
-  pointer.startY = m.y;
-
-  camStart.x = cam.x;
-  camStart.y = cam.y;
-
-  pointer.dragging = false;
+c.addEventListener('pointerdown',e=>{
+const m=getMousePos(e);
+pointer.down=true;
+pointer.node=getNodeAt(m.x,m.y);
+pointer.startX=m.x;
+pointer.startY=m.y;
+camStart.x=cam.x;
+camStart.y=cam.y;
+pointer.dragging=false;
 });
 
-c.addEventListener('pointermove', e=>{
-  const m = getMousePos(e);
+c.addEventListener('pointermove',e=>{
+const m=getMousePos(e);
+hoverNode=getNodeAt(m.x,m.y);
+if(!pointer.down)return;
 
-  hoverNode = getNodeAt(m.x,m.y);
+const dx=m.x-pointer.startX;
+const dy=m.y-pointer.startY;
 
-  if(!pointer.down) return;
+if(Math.hypot(dx,dy)>5)pointer.dragging=true;
 
-  const dx = m.x - pointer.startX;
-  const dy = m.y - pointer.startY;
-
-  if(Math.hypot(dx,dy) > 5) pointer.dragging = true;
-
-  if(pointer.node && pointer.dragging){
-    const w = screenToWorld(m.x,m.y);
-    pointer.node.x = w.x;
-    pointer.node.y = w.y;
-  } else if(!pointer.node){
-    cam.x = camStart.x + dx/cam.s;
-    cam.y = camStart.y + dy/cam.s;
-  }
+if(pointer.node&&pointer.dragging){
+const w=screenToWorld(m.x,m.y);
+pointer.node.x=w.x;
+pointer.node.y=w.y;
+}else if(!pointer.node){
+cam.x=camStart.x+dx/cam.s;
+cam.y=camStart.y+dy/cam.s;
+}
 });
 
-c.addEventListener('pointerup', e=>{
-  const m = getMousePos(e);
-
-  const n = getNodeAt(m.x,m.y);
-
-  if(pointer.node && !pointer.dragging && n === pointer.node){
-    openPanel(n);
-  }
-
-  pointer.down = false;
-  pointer.node = null;
-  pointer.dragging = false;
+c.addEventListener('pointerup',e=>{
+const m=getMousePos(e);
+const n=getNodeAt(m.x,m.y);
+if(pointer.node&&!pointer.dragging&&n===pointer.node)openPanel(n);
+pointer.down=false;
+pointer.node=null;
+pointer.dragging=false;
 });
 
-c.addEventListener('wheel', e=>{
-  e.preventDefault();
-  const zoom = 0.0015;
-  cam.s *= 1 - e.deltaY * zoom;
-  cam.s = Math.max(0.4, Math.min(3, cam.s));
+c.addEventListener('wheel',e=>{
+e.preventDefault();
+const z=0.0015;
+cam.s*=1-e.deltaY*z;
+cam.s=Math.max(0.4,Math.min(3,cam.s));
 },{passive:false});
 
-
 function step(){
-  for(const n of nodes){
-    if(n.fixed) continue;
-    n.vx *= 0.985;
-    n.vy *= 0.985;
-    n.x += n.vx;
-    n.y += n.vy;
-  }
+const t=Date.now()*0.0007;
+
+for(const n of nodes){
+if(n.fixed)continue;
+
+n.vx*=0.985;
+n.vy*=0.985;
+
+n.vx+=Math.sin(t+n.y*0.012)*0.004;
+n.vy+=Math.cos(t+n.x*0.012)*0.004;
+
+n.x+=n.vx;
+n.y+=n.vy;
+}
 }
 
 function draw(){
-  ctx.clearRect(0,0,W,H);
+ctx.clearRect(0,0,W,H);
 
-  // edges
-  ctx.strokeStyle = '#c4b5fd';
-  edges.forEach(e=>{
-    const a = worldToScreen(nodes[e[0]].x,nodes[e[0]].y);
-    const b = worldToScreen(nodes[e[1]].x,nodes[e[1]].y);
+ctx.strokeStyle='#c4b5fd';
 
-    ctx.globalAlpha = hoverNode ? 0.15 : 0.25;
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
-    ctx.stroke();
-  });
+edges.forEach(e=>{
+const a=worldToScreen(nodes[e[0]].x,nodes[e[0]].y);
+const b=worldToScreen(nodes[e[1]].x,nodes[e[1]].y);
 
-  ctx.globalAlpha = 1;
+ctx.globalAlpha=hoverNode?0.15:0.25;
+ctx.beginPath();
+ctx.moveTo(a.x,a.y);
+ctx.lineTo(b.x,b.y);
+ctx.stroke();
+});
 
-  // nodes
-  for(const n of nodes){
-    const p = worldToScreen(n.x,n.y);
+ctx.globalAlpha=1;
 
-    const isHover = hoverNode && hoverNode.id === n.id;
-    ctx.globalAlpha = hoverNode && !isHover ? 0.3 : 1;
+for(const n of nodes){
+const p=worldToScreen(n.x,n.y);
+const h=hoverNode&&hoverNode.id===n.id;
 
-    ctx.fillStyle = GROUPS[n.group]?.color || '#fff';
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,n.rVisual,0,Math.PI*2);
-    ctx.fill();
+ctx.globalAlpha=hoverNode&&!h?0.3:1;
 
-    ctx.fillStyle = '#b08cff';
-    ctx.font = '12px Arial';
-    ctx.fillText(n.id,p.x+8,p.y+4);
-  }
+ctx.fillStyle=GROUPS[n.group]?.color||'#fff';
+ctx.beginPath();
+ctx.arc(p.x,p.y,n.rVisual,0,Math.PI*2);
+ctx.fill();
 
-  ctx.globalAlpha = 1;
+ctx.fillStyle='#b08cff';
+ctx.font='12px Arial';
+ctx.fillText(n.id,p.x+8,p.y+4);
+}
+
+ctx.globalAlpha=1;
 }
 
 function loop(){
-  step();
-  draw();
-  requestAnimationFrame(loop);
+step();
+draw();
+requestAnimationFrame(loop);
 }
 
 init();
@@ -307,6 +367,8 @@ resize();
 window.addEventListener('resize',resize);
 loop();
 
+}
 </script>
+
 </body>
 </html>
