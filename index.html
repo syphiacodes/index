@@ -37,305 +37,276 @@ border-left:1px solid #2a2440;
 z-index:10;
 }
 
-a{
-  color:#d8ccff;
-  text-decoration:none;
-  border-bottom:1px solid rgba(216,204,255,0.25);
-  transition: all 0.25s ease;
-}
-
-a:hover{
-  color:#cbb8ff;
-  border-bottom:1px solid rgba(203,184,255,0.65);
-  text-shadow: 0 0 6px rgba(200,180,255,0.35);
-}
-
-.section-item a{
-  color:#d8ccff;
-  border-bottom:1px solid rgba(216,204,255,0.2);
-  transition: all 0.25s ease;
-}
-
-.section-item a:hover{
-  color:#d0bfff;
-  border-bottom:1px solid rgba(208,191,255,0.7);
-  text-shadow: 0 0 8px rgba(190,170,255,0.4);
-}
-
 #panel h2{margin:0 0 10px 0;color:#b08cff;font-size:16px;}
 #panel p{font-size:13px;line-height:1.4;opacity:0.9;}
 #panel a{color:#c4b5fd;text-decoration:underline;}
 
-#mobileApp{
-display:none;
-padding:24px;
-box-sizing:border-box;
-}
-
-#mobileApp h1{
-margin:0 0 18px 0;
-font-size:20px;
-color:#b08cff;
-}
-
-.section{margin-bottom:18px;}
-.section-title{font-size:13px;color:#c4b5fd;margin-bottom:6px;}
-.section-item{font-size:13px;opacity:0.85;line-height:1.4;}
-
-@media (max-width:600px){
-  #desktopApp{display:none;}
-  #mobileApp{display:block;}
-}
 </style>
 </head>
 <body>
 
 <div id="desktopApp">
-<canvas id='c'></canvas>
-<div id='panel'>
-<h2 id='pTitle'></h2>
-<p id='pBody'></p>
-<a id='pLink' target='_blank'>learn more</a>
+<canvas id="c"></canvas>
+<div id="panel">
+<h2 id="pTitle"></h2>
+<p id="pBody"></p>
+<a id="pLink" target="_blank">learn more</a>
 </div>
-</div>
-
-<div id="mobileApp">
-<h1><a href="https://cass.li" target="_blank">cass</a></h1>
-<div class="section">
-<div class="section-title">about:</div>
-<div class="section-item">- 17</div>
-<div class="section-item">- located in central europe</div>
-<div class="section-item">- knowledge in live audio / music production / event management</div>
-<div class="section-item">- contact <a href="mailto:cass@cass.li" target="_blank">cass(at)cass.li</a> for more information</div>
-</div>
-<div class="section">
-<div class="section-title">music:</div>
-<div class="section-item"><a href="https://www.discogs.com/user/casssch" target="_blank">- discogs</a></div>
-<div class="section-item"><a href="https://www.last.fm/user/casssch" target="_blank">- lastfm</a></div>
-<div class="section-item"><a href="https://open.spotify.com/user/31ulwdc3tcyolpnyft7qequvhip4" target="_blank">- spotify</a></div>
-<div class="section-item"><a href="https://33rpm.noblogs.org/" target="_blank">- music blog</a></div>
-</div>
-<div class="section">
-<div class="section-title">other links:</div>
-<div class="section-item"><a href="https://instagram.com/cassfields" target="_blank">- insta (photos and travels)</a></div>
-<div class="section-item"><a href="https://github.com/syphiacodes" target="_blank">- github (projects and other sites)</a></div>
-<div class="section-item"><a href="mailto:cass@cass.li" target="_blank">- email (other information)</a></div>
-</div>
-
-
 </div>
 
 <script>
-const isMobile = window.matchMedia('(max-width:600px)').matches;
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
 
-if(!isMobile){
+const panel = document.getElementById('panel');
+const pTitle = document.getElementById('pTitle');
+const pBody = document.getElementById('pBody');
+const pLink = document.getElementById('pLink');
 
-const c=document.getElementById('c');
-const ctx=c.getContext('2d');
-const panel=document.getElementById('panel');
-const pTitle=document.getElementById('pTitle');
-const pBody=document.getElementById('pBody');
-const pLink=document.getElementById('pLink');
+let W = 0, H = 0;
 
-let W=innerWidth,H=innerHeight;
-let cam={x:0,y:0,s:1};
-let nodes=[],edges=[];
-let hoverNode=null;
+let cam = { x: 0, y: 0, s: 1 };
+let nodes = [], edges = [];
+let hoverNode = null;
 
-const GROUPS={music:{color:'#b08cff'},web:{color:'#c4b5fd'},about:{color:'#d6ccff'}};
+const GROUPS = {
+  music: { color: '#b08cff' },
+  web: { color: '#c4b5fd' },
+  about: { color: '#d6ccff' }
+};
 
-const NODES_CONFIG=[
+const NODES_CONFIG = [
   {id:'17',group:'about',text:'based in central europe.'},
-  {id:'live audio',group:'about',text:'interested in live audio management and recording'},
-  {id:'music production',group:'about',text:'experimenting with music production using a variety of styles'},
-  {id:'event management',group:'about',text:'experience in managing events both locally and internationally'},
-  {id:'discogs',group:'music',text:'personal physical media collection',link:'https://www.discogs.com/user/casssch'},
-  {id:'lastfm',group:'music',text:'archive of my musical exploration',link:'https://www.last.fm/user/casssch'},
-  {id:'spotify',group:'music',text:'a few playlists',link:'https://open.spotify.com/user/31ulwdc3tcyolpnyft7qequvhip4'},
-  {id:'insta',group:'web',text:'photography posting',link:'https://instagram.com/cassfields'},
-  {id:'github',group:'web',text:'web projects and other sites',link:'https://github.com/syphiacodes'},
-  {id:'email',group:'web',text:'email for further contact',link:'mailto:cass@cass.li'},
-  {id:'music blog',group:'music',text:'blog about music, live events, and other related stuff',link:'https://33rpm.noblogs.org/'},
+  {id:'live audio',group:'about',text:'interested in live audio'},
+  {id:'music production',group:'about',text:'music work'},
+  {id:'event management',group:'about',text:'events'},
+  {id:'discogs',group:'music',text:'collection',link:'https://www.discogs.com/user/casssch'},
+  {id:'lastfm',group:'music',text:'music archive',link:'https://www.last.fm/user/casssch'},
+  {id:'spotify',group:'music',text:'playlists',link:'https://open.spotify.com'},
+  {id:'insta',group:'web',text:'photos',link:'https://instagram.com/cassfields'},
+  {id:'github',group:'web',text:'code',link:'https://github.com'},
+  {id:'email',group:'web',text:'contact',link:'mailto:cass@cass.li'}
 ];
 
-function initNodes(){
-  nodes=[{
-  	id:'cass',
-  	x:0,
-  	y:0,
-  	fixed:true,
-  	group:'core',
-  	r:5,
-  	rVisual:5,
-  	rHit:26,
-  	text:'main site',
-  	link:'https://cass.li'
-  }];
-  edges=[];
-
-  const groupMap={};
-
-  NODES_CONFIG.forEach((n,i)=>{
-    const node={
-      ...n,
-      x:(Math.random()-0.5)*500,
-      y:(Math.random()-0.5)*500,
-      vx:(Math.random()-0.5)*0.2,
-      vy:(Math.random()-0.5)*0.2,
-      r:4,
-      rVisual:4,
-      rHit:22
-    };
-
-    nodes.push(node);
-    edges.push([0,i+1]);
-
-    if(!groupMap[n.group]) groupMap[n.group]=[];
-    groupMap[n.group].push(i+1);
-  });
-
-  Object.values(groupMap).forEach(list=>{
-    for(let i=0;i<list.length-1;i++) edges.push([list[i],list[i+1]]);
-  });
-}
-
 function resize(){
-  const dpr=Math.max(1,devicePixelRatio||1);
-  W=innerWidth;H=innerHeight;
-  c.width=W*dpr;
-  c.height=H*dpr;
+  const dpr = window.devicePixelRatio || 1;
+
+  W = window.innerWidth;
+  H = window.innerHeight;
+
+  c.style.width = W + "px";
+  c.style.height = H + "px";
+
+  c.width = Math.round(W * dpr);
+  c.height = Math.round(H * dpr);
+
   ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-function worldToScreen(x,y){return{x:(x+cam.x)*cam.s+W/2,y:(y+cam.y)*cam.s+H/2};}
-function screenToWorld(x,y){return{x:(x-W/2)/cam.s-cam.x,y:(y-H/2)/cam.s-cam.y};}
+function worldToScreen(x,y){
+  return {
+    x:(x + cam.x) * cam.s + W/2,
+    y:(y + cam.y) * cam.s + H/2
+  };
+}
+
+function screenToWorld(x,y){
+  return {
+    x:(x - W/2)/cam.s - cam.x,
+    y:(y - H/2)/cam.s - cam.y
+  };
+}
+
+function getMousePos(e){
+  const rect = c.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
+function init(){
+  nodes = [{
+    id:'cass',
+    x:0,y:0,fixed:true,
+    group:'core',
+    rHit:26,
+    rVisual:6,
+    text:'main site',
+    link:'https://cass.li'
+  }];
+
+  edges = [];
+
+  NODES_CONFIG.forEach((n,i)=>{
+    nodes.push({
+      ...n,
+      x:(Math.random()-0.5)*500,
+      y:(Math.random()-0.5)*500,
+      vx:0,vy:0,
+      rHit:18,
+      rVisual:4
+    });
+
+    edges.push([0,i+1]);
+  });
+}
 
 function getNodeAt(x,y){
-  let w = screenToWorld(x,y);
+  const w = screenToWorld(x,y);
 
-  for(let n of nodes){
-    let dx = w.x - n.x;
-    let dy = w.y - n.y;
-    let dist = Math.sqrt(dx*dx + dy*dy);
+  let closest = null;
+  let closestDist = Infinity;
 
-    // scale hitbox with zoom + make it slightly forgiving
-    const baseHit = (n.rHit || 22);   // increased default
-    const hitRadius = (baseHit / cam.s) * 1.2;
+  for(const n of nodes){
+    const dx = w.x - n.x;
+    const dy = w.y - n.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
 
-    if(dist < hitRadius) return n;
+    const hit = n.rHit || 18;
+
+    if(dist < hit && dist < closestDist){
+      closest = n;
+      closestDist = dist;
+    }
   }
-  return null;
+
+  return closest;
 }
 
 function openPanel(n){
-  panel.style.display='block';
-  pTitle.innerText=n.id;
-  pBody.innerText=n.text||'';
+  panel.style.display = 'block';
+  pTitle.textContent = n.id;
+  pBody.textContent = n.text || '';
 
   if(n.link){
-    pLink.style.display='inline-block';
-    pLink.href=n.link;
-    pLink.innerText='learn more';
+    pLink.style.display = 'inline-block';
+    pLink.href = n.link;
   } else {
-    pLink.style.display='none';
-    pLink.href='#';
+    pLink.style.display = 'none';
   }
 }
 
-let pointer={down:false,node:null,startX:0,startY:0,dragging:false};
-let camStart={x:0,y:0};
+let pointer = { down:false, node:null, startX:0, startY:0, dragging:false };
+let camStart = { x:0, y:0 };
 
-c.addEventListener('pointerdown',e=>{
-  pointer.down=true;
-  pointer.node=getNodeAt(e.clientX,e.clientY);
-  pointer.startX=e.clientX;
-  pointer.startY=e.clientY;
-  camStart.x=cam.x;
-  camStart.y=cam.y;
-  pointer.dragging=false;
+c.addEventListener('pointerdown', e=>{
+  const m = getMousePos(e);
+
+  pointer.down = true;
+  pointer.node = getNodeAt(m.x,m.y);
+  pointer.startX = m.x;
+  pointer.startY = m.y;
+
+  camStart.x = cam.x;
+  camStart.y = cam.y;
+
+  pointer.dragging = false;
 });
 
-c.addEventListener('pointermove',e=>{
-  hoverNode=getNodeAt(e.clientX,e.clientY);
+c.addEventListener('pointermove', e=>{
+  const m = getMousePos(e);
+
+  hoverNode = getNodeAt(m.x,m.y);
+
   if(!pointer.down) return;
 
-  let dx=e.clientX-pointer.startX;
-  let dy=e.clientY-pointer.startY;
-  if(Math.sqrt(dx*dx+dy*dy)>5) pointer.dragging=true;
+  const dx = m.x - pointer.startX;
+  const dy = m.y - pointer.startY;
+
+  if(Math.hypot(dx,dy) > 5) pointer.dragging = true;
 
   if(pointer.node && pointer.dragging){
-    let w=screenToWorld(e.clientX,e.clientY);
-    pointer.node.x=w.x;
-    pointer.node.y=w.y;
+    const w = screenToWorld(m.x,m.y);
+    pointer.node.x = w.x;
+    pointer.node.y = w.y;
   } else if(!pointer.node){
-    cam.x=camStart.x+(dx/cam.s);
-    cam.y=camStart.y+(dy/cam.s);
+    cam.x = camStart.x + dx/cam.s;
+    cam.y = camStart.y + dy/cam.s;
   }
 });
 
-c.addEventListener('wheel',e=>{
+c.addEventListener('pointerup', e=>{
+  const m = getMousePos(e);
+
+  const n = getNodeAt(m.x,m.y);
+
+  if(pointer.node && !pointer.dragging && n === pointer.node){
+    openPanel(n);
+  }
+
+  pointer.down = false;
+  pointer.node = null;
+  pointer.dragging = false;
+});
+
+c.addEventListener('wheel', e=>{
   e.preventDefault();
-  const zoomIntensity=0.0015;
-  cam.s *= (1 - e.deltaY*zoomIntensity);
+  const zoom = 0.0015;
+  cam.s *= 1 - e.deltaY * zoom;
   cam.s = Math.max(0.4, Math.min(3, cam.s));
 },{passive:false});
 
-c.addEventListener('pointerup',e=>{
-  let n=getNodeAt(e.clientX,e.clientY);
-  if(pointer.node && !pointer.dragging && n===pointer.node) openPanel(n);
-  pointer.down=false;
-  pointer.node=null;
-  pointer.dragging=false;
-});
 
 function step(){
-  for(let n of nodes){
+  for(const n of nodes){
     if(n.fixed) continue;
-    n.vx*=0.985;
-    n.vy*=0.985;
-    n.vx+=Math.sin(Date.now()*0.0007+n.y*0.01)*0.004;
-    n.vy+=Math.cos(Date.now()*0.0007+n.x*0.01)*0.004;
-    n.x+=n.vx;
-    n.y+=n.vy;
+    n.vx *= 0.985;
+    n.vy *= 0.985;
+    n.x += n.vx;
+    n.y += n.vy;
   }
 }
 
 function draw(){
   ctx.clearRect(0,0,W,H);
 
+  // edges
+  ctx.strokeStyle = '#c4b5fd';
   edges.forEach(e=>{
-    let a=worldToScreen(nodes[e[0]].x,nodes[e[0]].y);
-    let b=worldToScreen(nodes[e[1]].x,nodes[e[1]].y);
-    ctx.globalAlpha=hoverNode?0.15:0.25;
-    ctx.strokeStyle='#c4b5fd';
-    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    const a = worldToScreen(nodes[e[0]].x,nodes[e[0]].y);
+    const b = worldToScreen(nodes[e[1]].x,nodes[e[1]].y);
+
+    ctx.globalAlpha = hoverNode ? 0.15 : 0.25;
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
   });
 
-  ctx.globalAlpha=1;
+  ctx.globalAlpha = 1;
 
-  nodes.forEach(n=>{
-    let p=worldToScreen(n.x,n.y);
-    let isHover=hoverNode&&hoverNode.id===n.id;
-    let dim=hoverNode&&!isHover?0.25:1;
-    ctx.globalAlpha=dim;
+  // nodes
+  for(const n of nodes){
+    const p = worldToScreen(n.x,n.y);
 
-    ctx.fillStyle=GROUPS[n.group]?.color||'#fff';
-    ctx.beginPath();ctx.arc(p.x,p.y,n.rVisual||4,0,Math.PI*2);ctx.fill();
+    const isHover = hoverNode && hoverNode.id === n.id;
+    ctx.globalAlpha = hoverNode && !isHover ? 0.3 : 1;
 
-    ctx.fillStyle='#b08cff';
-    ctx.font='12px Arial';
+    ctx.fillStyle = GROUPS[n.group]?.color || '#fff';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,n.rVisual,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = '#b08cff';
+    ctx.font = '12px Arial';
     ctx.fillText(n.id,p.x+8,p.y+4);
-  });
+  }
 
-  ctx.globalAlpha=1;
+  ctx.globalAlpha = 1;
 }
 
-function loop(){step();draw();requestAnimationFrame(loop);}loop();
-
-initNodes();resize();window.addEventListener('resize',resize);
-
+function loop(){
+  step();
+  draw();
+  requestAnimationFrame(loop);
 }
+
+init();
+resize();
+window.addEventListener('resize',resize);
+loop();
+
 </script>
-
 </body>
 </html>
