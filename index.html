@@ -167,7 +167,7 @@ function initNodes(){
   	group:'core',
   	r:5,
   	rVisual:5,
-  	rHit:16,
+  	rHit:26,
   	text:'main site',
   	link:'https://cass.li'
   }];
@@ -184,7 +184,7 @@ function initNodes(){
       vy:(Math.random()-0.5)*0.2,
       r:4,
       rVisual:4,
-      rHit:14
+      rHit:22
     };
 
     nodes.push(node);
@@ -211,11 +211,18 @@ function worldToScreen(x,y){return{x:(x+cam.x)*cam.s+W/2,y:(y+cam.y)*cam.s+H/2};
 function screenToWorld(x,y){return{x:(x-W/2)/cam.s-cam.x,y:(y-H/2)/cam.s-cam.y};}
 
 function getNodeAt(x,y){
-  let w=screenToWorld(x,y);
+  let w = screenToWorld(x,y);
+
   for(let n of nodes){
-    let dx=w.x-n.x,dy=w.y-n.y;
-    let dist=Math.sqrt(dx*dx+dy*dy);
-    if(dist<(n.rHit||14)) return n;
+    let dx = w.x - n.x;
+    let dy = w.y - n.y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+
+    // scale hitbox with zoom + make it slightly forgiving
+    const baseHit = (n.rHit || 22);   // increased default
+    const hitRadius = (baseHit / cam.s) * 1.2;
+
+    if(dist < hitRadius) return n;
   }
   return null;
 }
