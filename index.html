@@ -24,6 +24,8 @@
 <meta name="twitter:description" content="interactive network / audio / music / web experiments">
 <meta name="twitter:image" content="https://cass.li/metabg.gif">
 
+<audio id="bgAudio" src="09. Flyby VFR.mp3" autoplay loop></audio>
+
 <style>
 html,body{
 margin:0;
@@ -91,6 +93,22 @@ text-shadow:0 0 6px rgba(200,180,255,0.35);
 #desktopApp{display:none;}
 #mobileApp{display:block;}
 }
+
+html, body {
+user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+}
+
+* {
+user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+}
+
+body {
+-webkit-touch-callout: none;
+}
 </style>
 </head>
 <body>
@@ -133,6 +151,22 @@ text-shadow:0 0 6px rgba(200,180,255,0.35);
 </div>
 
 <script>
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.addEventListener("copy", e => e.preventDefault());
+document.addEventListener("cut", e => e.preventDefault());
+document.addEventListener("paste", e => e.preventDefault());
+
+document.addEventListener("keydown", e => {
+  if (
+    (e.ctrlKey || e.metaKey) &&
+    ["c","x","v","u","s","a"].includes(e.key.toLowerCase())
+  ) {
+    e.preventDefault();
+  }
+});
+
 const isMobile = window.matchMedia('(max-width:600px)').matches;
 
 if(!isMobile){
@@ -388,6 +422,27 @@ window.addEventListener('resize',resize);
 loop();
 
 }
+
+const audio = document.getElementById("bgAudio");
+
+if (audio) {
+  audio.volume = 0.4;
+
+  const tryPlay = () => {
+    audio.play().catch(() => {
+      const unlock = () => {
+        audio.play();
+        window.removeEventListener("click", unlock);
+        window.removeEventListener("touchstart", unlock);
+      };
+      window.addEventListener("click", unlock);
+      window.addEventListener("touchstart", unlock);
+    });
+  };
+
+  tryPlay();
+}
+  
 </script>
 
 </body>
