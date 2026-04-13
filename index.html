@@ -7,12 +7,12 @@
 <title>cass</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="interactive network / audio / music / web experiments">
+<meta name="description" content="audio / music / web experiments">
 
 <link rel="icon" href="site.ico" type="image/x-icon">
 
 <meta property="og:title" content="cass">
-<meta property="og:description" content="interactive network / audio / music / web experiments">
+<meta property="og:description" content="audio / music / web experiments">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cass.li">
 <meta property="og:image" content="https://cass.li/metabg.gif">
@@ -23,8 +23,6 @@
 <meta name="twitter:title" content="cass">
 <meta name="twitter:description" content="interactive network / audio / music / web experiments">
 <meta name="twitter:image" content="https://cass.li/metabg.gif">
-
-<audio id="bgAudio" src="09. Flyby VFR.mp3" autoplay loop></audio>
 
 <style>
 html,body{
@@ -93,22 +91,6 @@ text-shadow:0 0 6px rgba(200,180,255,0.35);
 #desktopApp{display:none;}
 #mobileApp{display:block;}
 }
-
-html, body {
-user-select: none;
--webkit-user-select: none;
--ms-user-select: none;
-}
-
-* {
-user-select: none;
--webkit-user-select: none;
--ms-user-select: none;
-}
-
-body {
--webkit-touch-callout: none;
-}
 </style>
 </head>
 <body>
@@ -129,7 +111,7 @@ body {
 <div class="section-title">about:</div>
 <div class="section-item">- 17</div>
 <div class="section-item">- located in central europe</div>
-<div class="section-item">- live audio / music / events</div>
+<div class="section-item">- live audio / music / event management</div>
 <div class="section-item">- contact <a href="mailto:cass@cass.li">cass(at)cass.li</a></div>
 </div>
 
@@ -151,22 +133,6 @@ body {
 </div>
 
 <script>
-
-document.addEventListener("contextmenu", e => e.preventDefault());
-
-document.addEventListener("copy", e => e.preventDefault());
-document.addEventListener("cut", e => e.preventDefault());
-document.addEventListener("paste", e => e.preventDefault());
-
-document.addEventListener("keydown", e => {
-  if (
-    (e.ctrlKey || e.metaKey) &&
-    ["c","x","v","u","s","a"].includes(e.key.toLowerCase())
-  ) {
-    e.preventDefault();
-  }
-});
-
 const isMobile = window.matchMedia('(max-width:600px)').matches;
 
 if(!isMobile){
@@ -192,17 +158,17 @@ about:{color:'#d6ccff'}
 };
 
 const NODES_CONFIG=[
-{id:'17',group:'about',text:'based in central europe.'},
-{id:'live audio',group:'about',text:'live audio work'},
-{id:'music production',group:'about',text:'music production'},
-{id:'event management',group:'about',text:'events'},
-{id:'discogs',group:'music',text:'collection',link:'https://www.discogs.com/user/casssch'},
-{id:'lastfm',group:'music',text:'archive',link:'https://www.last.fm/user/casssch'},
+{id:'17',group:'about',text:'and based in central europe'},
+{id:'live audio',group:'about',text:'experience with live audio work'},
+{id:'music production',group:'about',text:'experiments with ableton and other audio production styles'},
+{id:'event management',group:'about',text:'knowledge of national and international event managment'},
+{id:'discogs',group:'music',text:'collection of my physical media',link:'https://www.discogs.com/user/casssch'},
+{id:'lastfm',group:'music',text:'archive of most of the music i have listened to, ever',link:'https://www.last.fm/user/casssch'},
 {id:'spotify',group:'music',text:'playlists',link:'https://open.spotify.com'},
 {id:'insta',group:'web',text:'photos',link:'https://instagram.com/cassfields'},
-{id:'github',group:'web',text:'projects',link:'https://github.com'},
-{id:'email',group:'web',text:'contact',link:'mailto:cass@cass.li'},
-{id:'music blog',group:'music',text:'blog',link:'https://33rpm.noblogs.org/'}
+{id:'github',group:'web',text:'other websites projects',link:'https://github.com'},
+{id:'email',group:'web',text:'contact for further information',link:'mailto:cass@cass.li'},
+{id:'music blog',group:'music',text:'event and music review blog',link:'https://33rpm.noblogs.org/'}
 ];
 
 function resize(){
@@ -422,27 +388,6 @@ window.addEventListener('resize',resize);
 loop();
 
 }
-
-const audio = document.getElementById("bgAudio");
-
-if (audio) {
-  audio.volume = 0.4;
-
-  const tryPlay = () => {
-    audio.play().catch(() => {
-      const unlock = () => {
-        audio.play();
-        window.removeEventListener("click", unlock);
-        window.removeEventListener("touchstart", unlock);
-      };
-      window.addEventListener("click", unlock);
-      window.addEventListener("touchstart", unlock);
-    });
-  };
-
-  tryPlay();
-}
-  
 </script>
 
 </body>
