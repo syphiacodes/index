@@ -24,6 +24,8 @@
 <meta name="twitter:description" content="interactive network / audio / music / web experiments">
 <meta name="twitter:image" content="https://cass.li/metabg.gif">
 
+<audio id="bgAudio" src="09. Flyby VFR.mp3" autoplay loop></audio>
+
 <style>
 html,body{
 margin:0;
@@ -83,6 +85,22 @@ border-bottom:1px solid rgba(203,184,255,0.65);
 text-shadow:0 0 6px rgba(200,180,255,0.35);
 }
 
+html, body {
+user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+}
+
+* {
+user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+}
+
+body {
+-webkit-touch-callout: none;
+}
+
 .section{margin-bottom:18px;}
 .section-title{font-size:13px;color:#c4b5fd;}
 .section-item{font-size:13px;opacity:0.85;line-height:1.4;}
@@ -133,6 +151,42 @@ text-shadow:0 0 6px rgba(200,180,255,0.35);
 </div>
 
 <script>
+
+const audio = document.getElementById("bgAudio");
+
+if (audio) {
+  audio.volume = 0.4;
+
+  const tryPlay = () => {
+    audio.play().catch(() => {
+      const unlock = () => {
+        audio.play();
+        window.removeEventListener("click", unlock);
+        window.removeEventListener("touchstart", unlock);
+      };
+      window.addEventListener("click", unlock);
+      window.addEventListener("touchstart", unlock);
+    });
+  };
+
+  tryPlay();
+}
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.addEventListener("copy", e => e.preventDefault());
+document.addEventListener("cut", e => e.preventDefault());
+document.addEventListener("paste", e => e.preventDefault());
+
+document.addEventListener("keydown", e => {
+  if (
+    (e.ctrlKey || e.metaKey) &&
+    ["c","x","v","u","s","a"].includes(e.key.toLowerCase())
+  ) {
+    e.preventDefault();
+  }
+});
+  
 const isMobile = window.matchMedia('(max-width:600px)').matches;
 
 if(!isMobile){
